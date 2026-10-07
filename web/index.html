@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGovernance | Komtaş Veri & Analitik Ekosistemi Copilot</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        komtas: {
+                            blue: '#1E40AF',
+                            cyan: '#06B6D4',
+                            dark: '#0F172A',
+                            card: '#1E293B',
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-[#0b1120] text-slate-100 min-h-screen font-sans antialiased">
+
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-cyan-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-cube text-white text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">AuraGovernance</span>
+                        <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/50">Komtaş Synergy</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium">Damalink Yönetişim & Qlik BI Technology Otonom Çözüm Mimarı</p>
+                </div>
+            </div>
+
+            <!-- Header Badges -->
+            <div class="flex items-center space-x-3">
+                <div class="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-slate-300 font-mono">DuckDB Lakehouse: Active</span>
+                </div>
+                <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-800/50 text-xs text-cyan-300">
+                    <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+                    <span>KVKK Guardrails: On</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Top Metrics / KPI Bar -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-[#162033] border border-slate-800 rounded-xl p-4 shadow-sm hover:border-blue-500/30 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+                    <span>TOPLAM CİRO & MARJ</span>
+                    <i class="fa-solid fa-coins text-amber-400"></i>
+                </div>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpi-rev" class="text-2xl font-bold text-white">₺0</span>
+                    <span id="kpi-margin" class="text-xs font-semibold text-emerald-400">-%</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1">1,500 Lakehouse İşlemi</div>
+            </div>
+
+            <div class="bg-[#162033] border border-slate-800 rounded-xl p-4 shadow-sm hover:border-cyan-500/30 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+                    <span>DAMALİNK SAĞLIK SKORU</span>
+                    <i class="fa-solid fa-heart-pulse text-cyan-400"></i>
+                </div>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpi-health" class="text-2xl font-bold text-cyan-400">%88.3</span>
+                    <span class="text-xs text-amber-400 font-medium">Uyum İncelemesi</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1">3 Tablo / 25 Kolon Denetlendi</div>
+            </div>
+
+            <div class="bg-[#162033] border border-slate-800 rounded-xl p-4 shadow-sm hover:border-rose-500/30 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+                    <span>KVKK / PII UYARILARI</span>
+                    <i class="fa-solid fa-user-shield text-rose-400"></i>
+                </div>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpi-pii" class="text-2xl font-bold text-rose-400">3 Kolon</span>
+                    <span class="text-xs text-rose-400/80 font-medium">Dinamik Maskeleme</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1">TCKN, Telefon, E-Posta</div>
+            </div>
+
+            <div class="bg-[#162033] border border-slate-800 rounded-xl p-4 shadow-sm hover:border-purple-500/30 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
+                    <span>KALİTE ANOMALİLERİ</span>
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                </div>
+                <div class="flex items-baseline space-x-2">
+                    <span id="kpi-anomalies" class="text-2xl font-bold text-amber-400">2 Tespit</span>
+                    <span class="text-xs text-amber-300 font-medium">Negatif Stok & Null</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1">Otomatik Düzeltme Önerisi Hazır</div>
+            </div>
+        </div>
+
+        <!-- Tab Controls -->
+        <div class="border-b border-slate-800 flex space-x-4">
+            <button id="tab-btn-gov" onclick="switchTab('gov')" class="py-3 px-4 border-b-2 border-cyan-400 text-cyan-400 font-semibold text-sm flex items-center space-x-2 transition">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>1. Damalink Yönetişim, KVKK & Veri Kataloğu Studio</span>
+            </button>
+            <button id="tab-btn-bi" onclick="switchTab('bi')" class="py-3 px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-semibold text-sm flex items-center space-x-2 transition">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>2. Qlik Self-Service BI & Kök Neden Copilot</span>
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: DAMALINK YONETISIM & KATALOG STUDIO -->
+        <!-- ========================================== -->
+        <div id="tab-content-gov" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#162033] p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                        <span>Damalink Otonom Katalog ve Kalite Analizörü</span>
+                        <span class="text-xs font-normal text-slate-400">(Metadata Driven Profiling)</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Lakehouse varlıklarının şeması, null oranları, KVKK sınıflandırması ve iş sözlüğü otonom taranır.</p>
+                </div>
+                <button onclick="runGovernanceScan()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-lg text-xs font-bold flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/20 transition">
+                    <i class="fa-solid fa-arrows-rotate" id="scan-icon"></i>
+                    <span>Taramayı Yenile & Snapshot Al</span>
+                </button>
+            </div>
+
+            <!-- Table Selectors -->
+            <div class="flex space-x-2" id="table-tab-buttons">
+                <!-- Dynamically generated table buttons -->
+            </div>
+
+            <!-- Selected Table Detail View -->
+            <div id="table-detail-container" class="space-y-6">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: QLIK SELF-SERVICE BI & COPILOT       -->
+        <!-- ========================================== -->
+        <div id="tab-content-bi" class="space-y-6 hidden">
+            <!-- Natural Language Query Bar -->
+            <div class="bg-[#162033] p-5 rounded-xl border border-slate-800 shadow-md space-y-4">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
+                        <span>Qlik Doğal Dil Analitik Sorgu Motoru (Text-to-SQL & Variance)</span>
+                    </label>
+                    <span class="text-xs text-slate-400 font-mono">Powered by DuckDB + Guardrails</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative flex-1">
+                        <input id="bi-input" type="text" placeholder="Örn: Marmara bölgesinde kâr neden düştü? Kök neden analizi yap..." 
+                            class="w-full bg-[#0b1120] border border-slate-700 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition"
+                            onkeydown="if(event.key === 'Enter') submitBIQuery()">
+                    </div>
+                    <button onclick="submitBIQuery()" class="px-5 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm rounded-lg flex items-center justify-center space-x-2 shadow-lg shadow-cyan-600/30 transition">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Analiz Et</span>
+                    </button>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <span class="text-xs text-slate-400 font-semibold mr-1">Hızlı Senaryolar:</span>
+                    <button onclick="setQueryAndRun('Marmara bölgesinde kâr neden düştü? Kök neden analizi yap')" class="px-2.5 py-1 text-xs rounded-md bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 font-medium transition">
+                        🚨 Marmara Kâr Düşüşü Kök Neden
+                    </button>
+                    <button onclick="setQueryAndRun('En çok ciro getiren ilk 5 ürün hangisi?')" class="px-2.5 py-1 text-xs rounded-md bg-blue-950/50 hover:bg-blue-900/60 border border-blue-800/60 text-blue-300 font-medium transition">
+                        🏆 Top 5 Ciro Ürünleri
+                    </button>
+                    <button onclick="setQueryAndRun('Bölgelere göre toplam satış ve kâr dağılımı')" class="px-2.5 py-1 text-xs rounded-md bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/60 text-emerald-300 font-medium transition">
+                        🗺️ Bölgesel Satış & Kâr
+                    </button>
+                    <button onclick="setQueryAndRun('Müşteri segmentlerine göre harcama ve bakiye analizi')" class="px-2.5 py-1 text-xs rounded-md bg-purple-950/50 hover:bg-purple-900/60 border border-purple-800/60 text-purple-300 font-medium transition">
+                        👥 Müşteri Segmentleri
+                    </button>
+                    <button onclick="setQueryAndRun('Ödeme yöntemlerine göre işlem hacmi dağılımı')" class="px-2.5 py-1 text-xs rounded-md bg-amber-950/50 hover:bg-amber-900/60 border border-amber-800/60 text-amber-300 font-medium transition">
+                        💳 Ödeme Yöntemleri
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analysis Result Container -->
+            <div id="bi-result-container" class="space-y-6">
+                <!-- Executive Summary & Root-Cause Card -->
+                <div id="bi-executive-card" class="bg-gradient-to-br from-[#162033] to-[#1e293b] p-5 rounded-xl border border-slate-700/80 shadow-md hidden">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                            <h3 class="font-bold text-white text-base">C-Level Yönetici Özeti & Kök Neden Raporu</h3>
+                        </div>
+                        <span id="bi-exec-metric" class="text-xs px-2.5 py-1 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/60 font-semibold font-mono"></span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-2">
+                                <i class="fa-solid fa-magnifying-glass-chart mr-1"></i>Temel Bulgular & Varyans
+                            </h4>
+                            <ul id="bi-findings-list" class="space-y-1.5 text-xs text-slate-300"></ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-2">
+                                <i class="fa-solid fa-lightbulb mr-1"></i>Stratejik Aksiyon Önerileri
+                            </h4>
+                            <ul id="bi-actions-list" class="space-y-1.5 text-xs text-slate-300"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardrail & SQL Panel -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: SQL Query & Guardrails (1 col) -->
+                    <div class="bg-[#162033] p-4 rounded-xl border border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
+                                <i class="fa-solid fa-terminal text-blue-400"></i>
+                                <span>Üretilen DuckDB SQL</span>
+                            </span>
+                            <span id="bi-guardrail-pill" class="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                                SAFE SELECT
+                            </span>
+                        </div>
+                        <pre id="bi-sql-code" class="bg-[#0b1120] p-3 rounded-lg text-xs font-mono text-cyan-300 overflow-x-auto border border-slate-800/80">-- Sorgu girilmesini bekliyor...</pre>
+                        <div id="bi-guardrail-warn-box" class="hidden text-xs p-2.5 rounded bg-amber-950/40 border border-amber-800 text-amber-300 flex items-start space-x-2">
+                            <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                            <span id="bi-guardrail-warn-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Interactive Chart (2 col) -->
+                    <div class="lg:col-span-2 bg-[#162033] p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
+                                <i class="fa-solid fa-chart-column text-cyan-400"></i>
+                                <span>Qlik Smart Visualization</span>
+                            </span>
+                            <span id="chart-type-tag" class="text-[10px] px-2 py-0.5 rounded font-mono bg-slate-800 text-slate-400">Bar Chart</span>
+                        </div>
+                        <div class="relative h-64 w-full">
+                            <canvas id="bi-chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query Data Table -->
+                <div class="bg-[#162033] rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-table text-indigo-400"></i>
+                            <span>Sorgu Çıktısı Tablosu</span>
+                        </span>
+                        <span id="bi-row-count-badge" class="text-xs text-slate-400 font-mono">0 kayıt</span>
+                    </div>
+                    <div class="overflow-x-auto max-h-80">
+                        <table class="w-full text-left text-xs" id="bi-data-table">
+                            <thead class="bg-[#0f172a] text-slate-400 font-semibold border-b border-slate-800 sticky top-0" id="bi-table-head">
+                                <tr><th class="p-3">Sorgu bekleniyor</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-slate-200" id="bi-table-body">
+                                <tr><td class="p-3 text-slate-500 italic">Henüz veri sorgulanmadı.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-slate-800 bg-[#0f172a] py-6">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-400">AuraGovernance v1.0.0</span>
+                <span>•</span>
+                <span>Geliştirici: <strong>Ömer Çakan</strong> (YBS '26 - Data & AI Engineer)</span>
+            </div>
+            <div>
+                <span>Komtaş Veri ve Analitik Ekosistemi Değer Odaklı Projesi</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Frontend Application Logic -->
+    <script>
+        let currentGovernanceData = null;
+        let activeTableIndex = 0;
+        let chartInstance = null;
+
+        // Sayfa yuklendiginde calis
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadQuickInsights();
+            await runGovernanceScan();
+            // Default olarak ilk ornek soruyu calistir
+            await setQueryAndRun('Marmara bölgesinde kâr neden düştü? Kök neden analizi yap');
+        });
+
+        function switchTab(tab) {
+            const govBtn = document.getElementById('tab-btn-gov');
+            const biBtn = document.getElementById('tab-btn-bi');
+            const govContent = document.getElementById('tab-content-gov');
+            const biContent = document.getElementById('tab-content-bi');
+
+            if (tab === 'gov') {
+                govBtn.className = "py-3 px-4 border-b-2 border-cyan-400 text-cyan-400 font-semibold text-sm flex items-center space-x-2 transition";
+                biBtn.className = "py-3 px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-semibold text-sm flex items-center space-x-2 transition";
+                govContent.classList.remove('hidden');
+                biContent.classList.add('hidden');
+            } else {
+                biBtn.className = "py-3 px-4 border-b-2 border-cyan-400 text-cyan-400 font-semibold text-sm flex items-center space-x-2 transition";
+                govBtn.className = "py-3 px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-semibold text-sm flex items-center space-x-2 transition";
+                biContent.classList.remove('hidden');
+                govContent.classList.add('hidden');
+            }
+        }
+
+        async function loadQuickInsights() {
+            try {
+                const res = await fetch('/api/bi/quick-insights');
+                const data = await res.json();
+                document.getElementById('kpi-rev').innerText = '₺' + Number(data.total_revenue).toLocaleString('tr-TR', { maximumFractionDigits: 0 });
+                document.getElementById('kpi-margin').innerText = '%' + data.profit_margin_pct + ' Marj';
+            } catch (err) {
+                console.error("Quick insights error:", err);
+            }
+        }
+
+        async function runGovernanceScan() {
+            const scanIcon = document.getElementById('scan-icon');
+            scanIcon.classList.add('fa-spin');
+
+            try {
+                const res = await fetch('/api/governance/scan');
+                const data = await res.json();
+                currentGovernanceData = data;
+
+                // KPI güncelle
+                document.getElementById('kpi-health').innerText = '%' + data.lakehouse_overview.overall_ecosystem_health;
+                document.getElementById('kpi-pii').innerText = data.lakehouse_overview.total_pii_columns_flagged + ' Kolon';
+                document.getElementById('kpi-anomalies').innerText = data.lakehouse_overview.total_quality_anomalies + ' Tespit';
+
+                renderTableButtons(data.tables);
+                renderSelectedTableDetail(0);
+            } catch (err) {
+                console.error("Governance scan error:", err);
+            } finally {
+                scanIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function renderTableButtons(tables) {
+            const container = document.getElementById('table-tab-buttons');
+            container.innerHTML = '';
+            tables.forEach((tbl, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `px-3.5 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 border transition ${idx === activeTableIndex ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300' : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-slate-200'}`;
+                btn.innerHTML = `
+                    <i class="fa-solid fa-table"></i>
+                    <span>${tbl.table_name}</span>
+                    <span class="text-[10px] px-1.5 py-0.2 rounded-full ${tbl.health_score >= 85 ? 'bg-emerald-900/60 text-emerald-300' : 'bg-amber-900/60 text-amber-300'} font-mono">%${tbl.health_score}</span>
+                `;
+                btn.onclick = () => {
+                    activeTableIndex = idx;
+                    renderTableButtons(tables);
+                    renderSelectedTableDetail(idx);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderSelectedTableDetail(idx) {
+            if (!currentGovernanceData || !currentGovernanceData.tables[idx]) return;
+            const tbl = currentGovernanceData.tables[idx];
+            const container = document.getElementById('table-detail-container');
+
+            const glossary = tbl.business_glossary;
+
+            let html = `
+                <!-- Table Metadata & Glossary Card -->
+                <div class="bg-[#162033] p-5 rounded-xl border border-slate-800 space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-lg font-bold text-white font-mono">${tbl.table_name}</span>
+                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${tbl.health_score >= 85 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">
+                                Sağlık Skoru: %${tbl.health_score} (${tbl.health_status})
+                            </span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">${tbl.total_rows.toLocaleString()} Satır</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs text-slate-400">
+                            <span>Sorumlu: <strong>${glossary.owner || 'Veri Mühendisliği'}</strong></span>
+                            <span>•</span>
+                            <span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-900">${glossary.classification || 'Dahili'}</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-300 italic">
+                        <i class="fa-solid fa-book-bookmark text-cyan-400 mr-1.5"></i>
+                        ${glossary.description}
+                    </p>
+                </div>
+            `;
+
+            // Kalite Uyarilari Varsa Kart Goster
+            if (tbl.quality_issues && tbl.quality_issues.length > 0) {
+                html += `
+                    <div class="bg-amber-950/30 border border-amber-800/80 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center space-x-2 text-amber-400 font-bold text-xs">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>Damalink Veri Kalitesi & Anomali Bildirimleri</span>
+                        </div>
+                        <div class="space-y-1">
+                            ${tbl.quality_issues.map(iss => `
+                                <div class="text-xs text-amber-200/90 flex items-center space-x-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                    <span>${iss.message}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Kolon Yonetisim Tablosu
+            html += `
+                <div class="bg-[#162033] rounded-xl border border-slate-800 overflow-hidden shadow">
+                    <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-200">KOLON PROFİLLERİ, PII & MASKELEME DURUMU</span>
+                        <span class="text-xs text-slate-400 font-mono">${tbl.columns.length} Kolon Analiz Edildi</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-[#0f172a] text-slate-400 font-semibold border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">Kolon Adı</th>
+                                    <th class="p-3">Veri Tipi</th>
+                                    <th class="p-3">İş Tanımı (Glossary)</th>
+                                    <th class="p-3">Null %</th>
+                                    <th class="p-3">Benzersizlik %</th>
+                                    <th class="p-3">KVKK / PII Durumu</th>
+                                    <th class="p-3">Maskelenmiş Örnek</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/70 text-slate-300">
+                                ${tbl.columns.map(col => {
+                                    const colGlossary = glossary.columns && glossary.columns[col.name] ? glossary.columns[col.name] : '-';
+                                    let piiBadge = '<span class="text-slate-500 font-mono text-[11px]">Temiz</span>';
+                                    let sampleMasked = '-';
+
+                                    if (col.is_pii && col.pii_meta) {
+                                        piiBadge = `<span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-rose-950 text-rose-300 border border-rose-800">⚠️ ${col.pii_meta.pii_type}</span>`;
+                                        sampleMasked = col.pii_meta.sample_masked.map(s => `<code class="bg-slate-900 px-1 py-0.5 rounded text-[11px] text-cyan-300">${s}</code>`).join(' ');
+                                    }
+
+                                    return `
+                                        <tr class="hover:bg-slate-800/40 transition">
+                                            <td class="p-3 font-mono font-medium text-white flex items-center space-x-1.5">
+                                                ${col.is_primary_key_candidate ? '<i class="fa-solid fa-key text-amber-400 text-[10px]" title="PK Adayı"></i>' : ''}
+                                                <span>${col.name}</span>
+                                            </td>
+                                            <td class="p-3 font-mono text-slate-400">${col.type}</td>
+                                            <td class="p-3 text-slate-300 max-w-xs">${colGlossary}</td>
+                                            <td class="p-3 font-mono ${col.null_pct > 5 ? 'text-amber-400 font-bold' : 'text-slate-300'}">%${col.null_pct}</td>
+                                            <td class="p-3 font-mono text-slate-300">%${col.unique_pct}</td>
+                                            <td class="p-3">${piiBadge}</td>
+                                            <td class="p-3">${sampleMasked}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        async function setQueryAndRun(queryText) {
+            document.getElementById('bi-input').value = queryText;
+            await submitBIQuery();
+        }
+
+        async function submitBIQuery() {
+            const input = document.getElementById('bi-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            // Loading state
+            document.getElementById('bi-sql-code').innerText = "-- LangGraph ve Qlik motoru sorguyu isliyor...";
+
+            try {
+                const res = await fetch('/api/bi/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    document.getElementById('bi-sql-code').innerText = "-- HATA:\n" + data.error;
+                    document.getElementById('bi-guardrail-pill').className = "text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-rose-950 text-rose-400 border border-rose-800";
+                    document.getElementById('bi-guardrail-pill').innerText = "GUARDRAIL BLOCK";
+                    return;
+                }
+
+                // Render SQL
+                document.getElementById('bi-sql-code').innerText = data.generated_sql;
+                document.getElementById('bi-guardrail-pill').className = "text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-800";
+                document.getElementById('bi-guardrail-pill').innerText = "SAFE SELECT";
+
+                // Guardrail Warning
+                const warnBox = document.getElementById('bi-guardrail-warn-box');
+                if (data.guardrail_warning) {
+                    warnBox.classList.remove('hidden');
+                    document.getElementById('bi-guardrail-warn-text').innerText = data.guardrail_warning;
+                } else {
+                    warnBox.classList.add('hidden');
+                }
+
+                // Render Executive Summary
+                const execCard = document.getElementById('bi-executive-card');
+                const findingsList = document.getElementById('bi-findings-list');
+                const actionsList = document.getElementById('bi-actions-list');
+                const metricBadge = document.getElementById('bi-exec-metric');
+
+                if (data.executive_summary) {
+                    execCard.classList.remove('hidden');
+                    metricBadge.innerText = data.executive_summary.key_metric || 'Qlik Insights';
+                    findingsList.innerHTML = data.executive_summary.findings.map(f => `<li>• ${f}</li>`).join('');
+                    actionsList.innerHTML = data.executive_summary.strategic_recommendations.map(a => `<li>💡 ${a}</li>`).join('');
+                } else {
+                    execCard.classList.add('hidden');
+                }
+
+                // Render Data Table
+                document.getElementById('bi-row-count-badge').innerText = `${data.row_count} kayıt`;
+                const thead = document.getElementById('bi-table-head');
+                const tbody = document.getElementById('bi-table-body');
+
+                thead.innerHTML = `<tr>${data.columns.map(c => `<th class="p-3">${c.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}</tr>`;
+                tbody.innerHTML = data.data.map(row => {
+                    return `<tr class="hover:bg-slate-800/40">${data.columns.map(c => {
+                        let val = row[c];
+                        if (typeof val === 'number') val = val.toLocaleString('tr-TR');
+                        return `<td class="p-3 font-mono">${val !== null ? val : '<span class="text-slate-600">[NULL]</span>'}</td>`;
+                    }).join('')}</tr>`;
+                }).join('');
+
+                // Render Chart.js
+                renderChart(data.chart_config);
+
+            } catch (err) {
+                console.error("BI query error:", err);
+            }
+        }
+
+        function renderChart(cfg) {
+            const ctx = document.getElementById('bi-chart-canvas').getContext('2d');
+            const typeTag = document.getElementById('chart-type-tag');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            if (!cfg) {
+                typeTag.innerText = "Tablo Görünümü";
+                return;
+            }
+
+            typeTag.innerText = (cfg.type || 'bar').toUpperCase() + " Chart";
+
+            // Chart dark mode font overrides
+            if (cfg.options) {
+                cfg.options.color = '#94A3B8';
+                if (cfg.options.plugins && cfg.options.plugins.legend) {
+                    cfg.options.plugins.legend.labels = { color: '#CBD5E1' };
+                }
+            }
+
+            chartInstance = new Chart(ctx, cfg);
+        }
+    </script>
+</body>
+</html>
